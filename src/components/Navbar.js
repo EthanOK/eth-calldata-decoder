@@ -33,7 +33,7 @@ function Navbar() {
         </Button>
         <Box pl="1rem">
           <Link
-            href={"https://github.com/apoorvlathey/eth-calldata-decoder"}
+            href={"https://github.com/EthanOK/eth-calldata-decoder"}
             isExternal
           >
             <FontAwesomeIcon icon={faGithub} size="2x" />

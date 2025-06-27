@@ -109,14 +109,15 @@ function Body() {
     // from Sourcify
     try {
       const response = await axios.get(
-        `https://repo.sourcify.dev/contracts/full_match/${
+        `https://sourcify.dev/server/repository/contracts/full_match/${
           networkInfo[networkIndex].chainID
         }/${toChecksumAddress(contractAddress)}/metadata.json`
       );
       fetched_abi = JSON.stringify(response.data.output.abi);
     } catch {
       // from Etherscan API
-      const response = await axios.get(networkInfo[networkIndex].api, {
+      const url = `https://api.etherscan.io/v2/api?chainid=${networkInfo[networkIndex].chainID}&module=contract&action=getabi&apikey=${networkInfo[networkIndex].apikey}`;
+      const response = await axios.get(url, {
         params: {
           address: contractAddress,
         },
