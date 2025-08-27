@@ -1,9 +1,15 @@
 import React from "react";
-import { VStack, FormControl, FormLabel, Button } from "@chakra-ui/react";
+import {
+  VStack,
+  FormControl,
+  FormLabel,
+  Button,
+  HStack,
+} from "@chakra-ui/react";
 import { UnlockIcon } from "@chakra-ui/icons";
 import JsonTextArea from "../common/JsonTextArea";
 
-function ABIInput({ abi, setAbi, btnDisabled, decode, bg }) {
+function ABIInput({ abi, setAbi, btnDisabled, decode, bg, importOpenChain }) {
   return (
     <VStack>
       <FormControl>
@@ -16,15 +22,24 @@ function ABIInput({ abi, setAbi, btnDisabled, decode, bg }) {
           ariaLabel="json abi"
         />
       </FormControl>
-      <Button
-        onClick={decode}
-        leftIcon={<UnlockIcon />}
-        style={{ marginTop: "20px" }}
-        colorScheme="blue"
-        disabled={btnDisabled}
-      >
-        Decode
-      </Button>
+      <HStack spacing={4} style={{ marginTop: "20px" }}>
+        <Button
+          onClick={decode}
+          leftIcon={<UnlockIcon />}
+          colorScheme="blue"
+          disabled={btnDisabled}
+        >
+          Decode
+        </Button>
+        <Button
+          onClick={importOpenChain}
+          leftIcon={<UnlockIcon />}
+          colorScheme="blue"
+          disabled={btnDisabled}
+        >
+          Import OpenChain
+        </Button>
+      </HStack>
     </VStack>
   );
 }

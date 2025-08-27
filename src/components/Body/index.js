@@ -67,6 +67,72 @@ function Body() {
     _decodeWithABI(abi, calldata);
   };
 
+  const importOpenChain = async () => {
+    const parsedABI = JSON.parse(abi);
+
+    const processInputType = (input) => {
+      if (!input) return "";
+
+      if (input.type === "tuple") {
+        if (input.components && Array.isArray(input.components)) {
+          const componentTypes = input.components
+            .map(processInputType)
+            .join(",");
+          return `(${componentTypes})`;
+        }
+        return "()";
+      }
+
+      if (input.type.startsWith("tuple[")) {
+        const arrayPart = input.type.slice(5);
+        if (input.components && Array.isArray(input.components)) {
+          const componentTypes = input.components
+            .map(processInputType)
+            .join(",");
+          return `(${componentTypes})${arrayPart}`;
+        }
+        return `()${arrayPart}`;
+      }
+
+      return input.type || "";
+    };
+
+    const functionSignatures = parsedABI
+      .filter(
+        (item) => item && (item.type === "function" || item.type === "error")
+      )
+      .map((item) => {
+        const inputs =
+          item.inputs && Array.isArray(item.inputs)
+            ? item.inputs.map(processInputType).join(",")
+            : "";
+        return `${item.name || "unknown"}(${inputs})`;
+      })
+      .filter((signature) => signature !== "unknown()");
+
+    const response = await axios.post(
+      "https://api.openchain.xyz/signature-database/v1/import",
+      {
+        function: functionSignatures,
+        event: [],
+      },
+      {
+        headers: {
+          accept: "application/json",
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    if (response.data?.result?.function) {
+      toast({
+        title: "Successfully Imported",
+        status: "success",
+        isClosable: true,
+        duration: 1000,
+      });
+    }
+  };
+
   const _decodeWithABI = (_abi, _calldata) => {
     abiDecoder.addABI(JSON.parse(_abi));
     let decoded;
@@ -152,9 +218,9 @@ function Body() {
       BigNumber.isBigNumber(arg)
         ? arg.toString()
         : // if arg is a struct in solidity
-        arg.constructor === Array
-        ? recursiveBNToString(arg)
-        : arg
+          arg.constructor === Array
+          ? recursiveBNToString(arg)
+          : arg
     );
   };
 
@@ -189,7 +255,13 @@ function Body() {
         },
       }
     );
-    const results = response.data.result.function[selector].map((f) => f.name);
+
+    const functionData = response.data.result?.function?.[selector];
+    let results = [];
+    if (functionData && Array.isArray(functionData)) {
+      results = functionData.map((f) => f.name);
+    }
+
     if (results.length > 0) {
       // can have multiple entries with the same selector
       const allPossibleDecoded = _getAllPossibleDecoded(results);
@@ -359,6 +431,7 @@ function Body() {
               btnDisabled={disableABIDecodeBtn}
               decode={decodeWithABI}
               bg={bgColor[colorMode]}
+              importOpenChain={importOpenChain}
             />
           </TabPanel>
           <TabPanel>

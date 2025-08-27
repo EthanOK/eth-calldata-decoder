@@ -50,7 +50,7 @@ function Footer() {
           </Link>
         </Heading>
         <HStack spacing={8} mt={10}>
-          <Social icon={faTwitter} link="https://x.com/0xEthanZhang" />
+          <Social icon={faTwitter} link="https://x.com/0xEthanHK" />
           <Social icon={faGithub} link="https://github.com/EthanOK" />
           {/* <Social
             icon={faLinkedin}

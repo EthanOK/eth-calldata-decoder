@@ -15,6 +15,11 @@ const networkInfo = [
     apikey: process.env.REACT_APP_ETHERSCAN_API_KEY,
   },
   {
+    chainID: 97,
+    name: "Binance Smart Chain Testnet",
+    apikey: process.env.REACT_APP_ETHERSCAN_API_KEY,
+  },
+  {
     chainID: 137,
     name: "Polygon",
     apikey: process.env.REACT_APP_ETHERSCAN_API_KEY,
